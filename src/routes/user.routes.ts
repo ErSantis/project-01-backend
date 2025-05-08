@@ -1,13 +1,19 @@
-import { Router } from 'express';
-import { UserController } from '../controller/user.controller';
-//import { authenticate } from '../Middleware/auth';
+import { Router } from "express";
+import { UserController } from "../controller/user.controller";
+import { authenticate } from "../middleware/auth.middleware";
+import { authorize } from "../middleware/authorize.middleware";
 
 const router = Router();
 
-router.post('/register', UserController.register);
-router.post('/login', UserController.login);
+router.post("/register", UserController.register);
+router.post("/login", UserController.login);
 
-// Rutas protegidas
-//router.use(authenticate);
+// Llamar al update pero con el mideleware de autenticación
+router.patch(
+  "/update/:id",
+  authenticate,
+  authorize("update_user"),
+  UserController.update
+);
 
 export default router;

@@ -5,15 +5,11 @@ import { generateToken } from "../utils/auth";
 
 export class UserActions {
   static async create(userData: IUser): Promise<IUser> {
-   
-
     const existingUser = await User.findOne({ email: userData.email });
     if (existingUser) {
       throw new Error("Email is already in use");
     }
-
     const hashedPassword = await hashPassword(userData.password);
-    console.log("Hashed password:", hashedPassword); // Debugging line
     const user = new User({ ...userData, password: hashedPassword });
     return await user.save();
   }
@@ -34,22 +30,32 @@ export class UserActions {
     return { user: user.toObject(), token };
   }
 
-  static async update(
-    id: string,
-    updates: IUserUpdate,
-    requester: IUser
-  ): Promise<IUser | null> {
-    if (
-      requester._id !== id &&
-      !requester.permissions.includes("update_users")
-    ) {
-      throw new Error("Unauthorized");
+  static async update(id: string, updates: IUserUpdate): Promise<IUser | null> {
+    const targetUser = await User.findById(id);
+    if (!targetUser) {
+      throw new Error("User not found");
     }
 
     if (updates.password) {
       updates.password = await hashPassword(updates.password);
     }
 
+    if (updates.permissions) {
+      updates.permissions = [
+        ...new Set([...(targetUser.permissions || []), ...updates.permissions]),
+      ];
+    }
+
     return User.findByIdAndUpdate(id, updates, { new: true }).lean();
+  }
+
+  static async disable(id: string): Promise<void> {
+    const targetUser = await User.findById(id);
+    if (!targetUser) {
+      throw new Error("User not found");
+    }
+
+    targetUser.isActive = false;
+    await targetUser.save();
   }
 }
