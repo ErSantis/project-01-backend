@@ -1,26 +1,13 @@
 import { Router } from "express";
 import { UserController } from "../controller/user.controller";
-import { authenticate } from "../middleware/auth.middleware";
 import { authorize } from "../middleware/authorize.middleware";
 
 const router = Router();
 
-router.post("/register", UserController.register);
-router.post("/login", UserController.login);
 
-// Llamar al update pero con el mideleware de autenticación
-router.patch(
-  "/update/:id",
-  authenticate,
-  authorize("update_user"),
-  UserController.update
-);
 
-router.delete(
-  "/disable/:id",
-  authenticate,
-  authorize("delete_user"),
-  UserController.disable
-);
+router.patch("/update/:id", authorize("update_user"), UserController.update);
+
+router.delete("/disable/:id", authorize("delete_user"), UserController.disable);
 
 export default router;
