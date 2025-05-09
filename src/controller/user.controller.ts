@@ -21,19 +21,19 @@ export class UserController {
   static login = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, password } = req.body;
-      
+
       if (!email || !password) {
         res.status(400).json({ error: "Email and password are required" });
         return;
       }
 
       const result = await UserActions.login({ email, password });
-      
+
       if (!result) {
         res.status(401).json({ error: "Invalid credentials" });
         return;
       }
-      
+
       res.json(result);
     } catch (error) {
       console.error("Login error:", error);
@@ -57,6 +57,22 @@ export class UserController {
         return;
       }
       res.json(user);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  static async disable(req: Request, res: Response) {
+    const { id } = req.params;
+
+    if (!id) {
+      res.status(400).json({ error: "ID is required" });
+      return;
+    }
+
+    try {
+      await UserActions.disable(id);
+      res.status(204).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

@@ -16,4 +16,11 @@ router.patch(
   UserController.update
 );
 
+router.delete(
+  "/disable/:id",
+  authenticate,
+  authorize("delete_user"),
+  UserController.disable
+);
+
 export default router;
