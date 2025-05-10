@@ -31,7 +31,10 @@ export class UserActions {
   }
 
   static async update(id: string, updates: IUserUpdate): Promise<IUser | null> {
-    const targetUser = await User.findById(id);
+    const targetUser = await User.findOne({
+      _id: id,
+      isActive: true,
+    });
     if (!targetUser) {
       throw new Error("User not found");
     }
@@ -40,17 +43,14 @@ export class UserActions {
       updates.password = await hashPassword(updates.password);
     }
 
-    if (updates.permissions) {
-      updates.permissions = [
-        ...new Set([...(targetUser.permissions || []), ...updates.permissions]),
-      ];
-    }
-
     return User.findByIdAndUpdate(id, updates, { new: true }).lean();
   }
 
   static async disable(id: string): Promise<void> {
-    const targetUser = await User.findById(id);
+    const targetUser = await User.findOne({
+      _id: id,
+      isActive: true,
+    });
     if (!targetUser) {
       throw new Error("User not found");
     }

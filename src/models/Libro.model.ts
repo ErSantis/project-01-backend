@@ -2,7 +2,6 @@ import { Schema, model } from "mongoose";
 import { ILibro, IReserva } from "../types/libro.type";
 
 
-
 const reservaSchema = new Schema<IReserva>({
   usuario: { type: String, required: true },
   fechaReserva: { type: Date, required: true },
@@ -17,8 +16,7 @@ const libroSchema = new Schema<ILibro>(
     casaEditorial: { type: String, required: true },
     fechaPublicacion: { type: Date, required: true },
     disponible: { type: Boolean, default: true },
-    reservas: { type: [reservaSchema], default: [] },
-    inhabilitado: { type: Boolean, default: false },
+    reservas: { type: [reservaSchema], default: [] }
   },
   {
     timestamps: true,

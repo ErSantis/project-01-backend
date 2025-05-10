@@ -3,16 +3,16 @@ import { LibroActions } from "../services/libro.service";
 
 export class LibroController {
   static async create(req: Request, res: Response) {
-    const { nombre, autor, genero, casaEditorial, fechaPublicacion } = req.body;
+
+    const { nombre, autor, genero, casaEditorial, fechaPublicacion} = req.body;
+
+    if (!nombre || !autor || !genero || !casaEditorial || !fechaPublicacion) {
+      res.status(400).json({ error: "All fields are required" });
+      return;
+    }
 
     try {
-      const libro = await LibroActions.create({
-        nombre,
-        autor,
-        genero,
-        casaEditorial,
-        fechaPublicacion,
-      });
+      const libro = await LibroActions.create(req.body);
       res.status(201).json(libro);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -38,13 +38,6 @@ export class LibroController {
     const filters = req.query;
 
     try {
-      
-      if (!filters.showDisabled) {
-        filters.inhabilitado = "false";
-      } else {
-        delete filters.showDisabled;
-      }
-
       const libros = await LibroActions.readByFilters(filters);
       res.json(libros);
     } catch (error: any) {

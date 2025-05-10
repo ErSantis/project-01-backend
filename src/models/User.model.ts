@@ -1,5 +1,4 @@
 import { Collection, Schema, model } from "mongoose";
-import bcrypt from "bcrypt";
 import { IUser } from "../types/user.type";
 
 const userSchema = new Schema<IUser>(

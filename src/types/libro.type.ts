@@ -13,7 +13,6 @@ export interface ILibro {
   fechaPublicacion: Date;
   disponible: boolean;
   reservas: IReserva[];
-  inhabilitado: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

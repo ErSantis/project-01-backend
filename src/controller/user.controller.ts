@@ -10,6 +10,7 @@ export class UserController {
       res.status(400).json({ error: "All fields are required" });
       return;
     }
+  
     try {
       const user = await UserActions.create(req.body as IUser);
       res.status(201).json(user);
